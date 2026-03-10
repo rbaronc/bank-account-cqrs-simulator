@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# This script generates a unique UUID v4 to be used as an Idempotency-Key.
+# It requires 'uuidgen' to be installed on the system.
+
+# Generate the UUID
+IDEMPOTENCY_KEY=$(cat /proc/sys/kernel/random/uuid)
+
+# Output to terminal
+echo "Generated Idempotency-Key: $IDEMPOTENCY_KEY"
+
+# Copy to clipboard (macOS: pbcopy, Linux: xclip/xsel)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    echo -n "$IDEMPOTENCY_KEY" | pbcopy
+    echo "Status: Copied to clipboard (macOS)."
+elif command -v xclip >/dev/null; then
+    echo -n "$IDEMPOTENCY_KEY" | xclip -selection clipboard
+    echo "Status: Copied to clipboard (Linux)."
+else
+    echo "Status: Please copy the key manually from the terminal."
+fi
