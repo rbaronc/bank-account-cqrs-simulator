@@ -1,0 +1,35 @@
+services:
+  # Message Broker for communication
+  rabbitmq:
+    image: rabbitmq:3-management
+    ports:
+      - "5672:5672"   # RabbitMQ port
+      - "15672:15672" # Management UI
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  # Main Database Instance
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: travis_admin
+      POSTGRES_PASSWORD: password123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    # We'll create separate DBs in the initialization script
+
+  # Placeholders for your Rails services
+  # You will build these as you progress
+  user-service:
+    build: ./services/user-service
+    depends_on:
+      - db
+      - rabbitmq
+    environment:
+      DATABASE_URL: postgres://travis_admin:password123@db:5432/user_service_db
+
+volumes:
+  rabbitmq_data:
+  postgres_data:
